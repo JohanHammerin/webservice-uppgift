@@ -1,5 +1,7 @@
 ### Egna ###
-!**/src/main/resources/application.properties
+# Ignore all application.properties files
+**/application.properties
+
 
 HELP.md
 .gradle
