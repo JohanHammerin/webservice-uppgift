@@ -4,7 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.repository.ChatUserRepository;
-import se.johan.webservice_uppgift.service.MessageService;
+
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/chatUser")
@@ -30,5 +32,13 @@ public class ChatUserController {
         chatUser.getFriendList().addAll(user.getFriendList());
 
         return ResponseEntity.ok(chatUserRepository.save(chatUser));
+    }
+
+    @GetMapping("/getFriendsTest")
+    public ResponseEntity<List<String>> getFriends(@RequestBody ChatUser user) {
+        ChatUser chatUser = chatUserRepository.findByUsername(user.getUsername());
+
+        return ResponseEntity.ok(chatUser.getFriendList());
+
     }
 }
