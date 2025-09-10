@@ -21,7 +21,8 @@ public class MessageController {
         return messageService.sendMessage(
                         request.getUsername(),
                         request.getPassword(),
-                        request.getBody()
+                        request.getBody(),
+                        request.getReceiver()
                 ).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(401).build());
     }
