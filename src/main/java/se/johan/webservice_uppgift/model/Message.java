@@ -5,11 +5,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "Messages")
+@Document(collection = "test")
 public class Message {
     String body;
-    ChatUser sender;
-    ChatUser receiver;
+    String sender;
+    String receiver;
     LocalDateTime timestamp;
     @Id
     String id;
@@ -17,7 +17,7 @@ public class Message {
     public Message() {
     }
 
-    public Message(String body, ChatUser sender, ChatUser receiver, LocalDateTime timestamp) {
+    public Message(String body, String sender, String receiver, LocalDateTime timestamp) {
         this.body = body;
         this.sender = sender;
         this.receiver = receiver;
@@ -40,19 +40,19 @@ public class Message {
         this.body = body;
     }
 
-    public ChatUser getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(ChatUser sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public ChatUser getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(ChatUser receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
