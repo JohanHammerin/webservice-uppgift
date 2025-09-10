@@ -39,6 +39,5 @@ public class ChatUserController {
         ChatUser chatUser = chatUserRepository.findByUsername(user.getUsername());
 
         return ResponseEntity.ok(chatUser.getFriendList());
-
     }
 }
