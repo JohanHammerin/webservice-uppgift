@@ -4,6 +4,7 @@ public class SendMessageRequest {
     private String username;
     private String password;
     private String body;
+    private String receiver;
 
     public String getUsername() {
         return username;
@@ -27,5 +28,13 @@ public class SendMessageRequest {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 }

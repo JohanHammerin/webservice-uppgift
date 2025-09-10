@@ -19,13 +19,14 @@ public class MessageService {
         this.chatUserRepository = chatUserRepository;
         this.messageRepository = messageRepository;
     }
-    public Optional<Message> sendMessage(String username, String password, String body) {
+    public Optional<Message> sendMessage(String username, String password, String body, String receiver) {
         return Optional.ofNullable(chatUserRepository.findByUsername(username))
                 .filter(user -> user.getPassword().equals(password))
                 .map(user -> {
                     Message message = new Message();
                     message.setSender(user.getUsername());
                     message.setBody(body);
+                    message.setReceiver(receiver);
                     message.setTimestamp(LocalDateTime.now());
                     return messageRepository.save(message);
                 });
