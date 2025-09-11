@@ -1,25 +1,30 @@
 package se.johan.webservice_uppgift.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class SendMessageRequest {
 
+    @NotBlank(message = "Name can not be Blank")
     private String username;
+    @NotBlank(message = "Password can not be Blank")
     private String password;
     private String body;
+    @NotBlank(message = "Receiver can not be Blank")
     private String receiver;
 
-    public String getUsername() {
+    public @NotBlank(message = "Name can not be Blank") String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@NotBlank(message = "Name can not be Blank") String username) {
         this.username = username;
     }
 
-    public String getPassword() {
+    public @NotBlank(message = "Password can not be Blank") String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(@NotBlank(message = "Password can not be Blank") String password) {
         this.password = password;
     }
 
@@ -31,11 +36,11 @@ public class SendMessageRequest {
         this.body = body;
     }
 
-    public String getReceiver() {
+    public @NotBlank(message = "Receiver can not be Blank") String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(String receiver) {
+    public void setReceiver(@NotBlank(message = "Receiver can not be Blank") String receiver) {
         this.receiver = receiver;
     }
 }

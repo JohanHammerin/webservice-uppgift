@@ -4,7 +4,7 @@ package se.johan.webservice_uppgift.dto;
 import jakarta.validation.constraints.NotBlank;
 
 public class RegisterRequest {
-    @NotBlank(message = "Name can not be Blank")
+    @NotBlank(message = "Username can not be Blank")
     private String username;
     @NotBlank(message = "Password can not be Blank")
     private String password;

@@ -1,6 +1,7 @@
 package se.johan.webservice_uppgift.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class MessageController {
     }
 
     @PostMapping("/sendNew")
-    public ResponseEntity<Message> sendNewMessage(@RequestBody SendMessageRequest request) {
+    public ResponseEntity<Message> sendNewMessage(@Valid @RequestBody SendMessageRequest request) {
         return messageService.sendMessage(
                         request.getUsername(),
                         request.getPassword(),
