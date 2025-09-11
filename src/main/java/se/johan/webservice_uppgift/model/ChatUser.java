@@ -1,6 +1,7 @@
 package se.johan.webservice_uppgift.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,6 +12,7 @@ import java.util.List;
 public class ChatUser {
 
     String username;
+    @JsonIgnore
     String password;
     @Id
     String id;
