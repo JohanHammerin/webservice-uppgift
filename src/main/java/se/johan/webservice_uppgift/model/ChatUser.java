@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "test")
 public class ChatUser {
 
@@ -13,6 +16,15 @@ public class ChatUser {
     String password;
     @Id
     String id;
+    List<String> friendList = new ArrayList<>();
+
+    public List<String> getFriendList() {
+        return friendList;
+    }
+
+    public void setFriendList(List<String> friendList) {
+        this.friendList = friendList;
+    }
 
     public ChatUser() {
     }
