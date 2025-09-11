@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.repository.ChatUserRepository;
+import se.johan.webservice_uppgift.service.ChatUserService;
 
 
 import java.util.List;
@@ -16,10 +17,6 @@ public class ChatUserController {
   
   private final ChatUserService service;
 
-
-    public ChatUserController(ChatUserService service) {
-        this.service = service;
-    }
 
     //DTO
     public static class RegisterRequest {
@@ -36,7 +33,8 @@ public class ChatUserController {
 
     private final ChatUserRepository chatUserRepository;
 
-    public ChatUserController(ChatUserRepository chatUserRepository) {
+    public ChatUserController(ChatUserService service, ChatUserRepository chatUserRepository) {
+        this.service = service;
         this.chatUserRepository = chatUserRepository;
     }
 
