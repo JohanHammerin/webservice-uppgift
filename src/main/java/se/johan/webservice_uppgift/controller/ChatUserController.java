@@ -1,6 +1,7 @@
 package se.johan.webservice_uppgift.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.johan.webservice_uppgift.dto.RegisterRequest;
@@ -17,22 +18,19 @@ public class ChatUserController {
 
 
     private final ChatUserService service;
-
-
-
-
-    @PostMapping("/register")
-    public ChatUser register(@RequestBody RegisterRequest req) {
-        return service.registerUser(req.username, req.password);
-    }
-
-
     private final ChatUserRepository chatUserRepository;
+
 
     public ChatUserController(ChatUserService service, ChatUserRepository chatUserRepository) {
         this.service = service;
         this.chatUserRepository = chatUserRepository;
     }
+
+    @PostMapping("/register")
+    public ChatUser register(@Valid @RequestBody RegisterRequest registerRequest) {
+        return service.registerUser(registerRequest);
+    }
+
 
     @PostMapping("/createUserTest")
     public ResponseEntity<ChatUser> createUserTest(@RequestBody ChatUser user) {
