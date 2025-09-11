@@ -26,16 +26,13 @@ public class MessageController {
 
     @PostMapping("/sendNew")
     public ResponseEntity<Message> sendNewMessage(@Valid @RequestBody SendMessageRequest request) {
-        return messageService.sendMessage(
-                        request.getUsername(),
-                        request.getPassword(),
-                        request.getBody(),
-                        request.getReceiver()
-                ).map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(401).build());
+        Message message = messageService.sendMessage(
+                request.getUsername(),
+                request.getPassword(),
+                request.getBody(),
+                request.getReceiver()
+        );
+        return ResponseEntity.ok(message);
     }
-
-
-
 }
 
