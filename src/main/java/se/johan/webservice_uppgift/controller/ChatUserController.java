@@ -3,6 +3,7 @@ package se.johan.webservice_uppgift.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import se.johan.webservice_uppgift.dto.RegisterRequest;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.repository.ChatUserRepository;
 import se.johan.webservice_uppgift.service.ChatUserService;
@@ -13,20 +14,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/chatUser")
 public class ChatUserController {
-  
-  
-  private final ChatUserService service;
 
 
-    //DTO
-    public static class RegisterRequest {
-        public String username;
-        public String password;
+    private final ChatUserService service;
 
 
-    }
+
+
     @PostMapping("/register")
-    public ChatUser register (@RequestBody RegisterRequest req){
+    public ChatUser register(@RequestBody RegisterRequest req) {
         return service.registerUser(req.username, req.password);
     }
 
