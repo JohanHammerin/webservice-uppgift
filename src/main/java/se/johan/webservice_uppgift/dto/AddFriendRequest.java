@@ -4,11 +4,11 @@ import jakarta.validation.constraints.NotBlank;
 
 public class AddFriendRequest {
     @NotBlank(message = "Username can not be BLANK")
-    String username;
+    private String username;
     @NotBlank (message = "Password can not be BLANK")
-    String password;
+    private String password;
     @NotBlank (message = "FriendUsername can not be BLANK")
-    String friendUsername;
+    private String friendUsername;
 
     public @NotBlank(message = "Username can not be BLANK") String getUsername() {
         return username;

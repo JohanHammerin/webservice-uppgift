@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 
 public class RegisterRequest {
     @NotBlank(message = "Name can not be Blank")
-    public String username;
+    private String username;
     @NotBlank(message = "Password can not be Blank")
-    public String password;
+    private String password;
 
     public @NotBlank(message = "Name can not be Blank") String getUsername() {
         return username;

@@ -1,6 +1,7 @@
 package se.johan.webservice_uppgift.dto;
 
 public class SendMessageRequest {
+
     private String username;
     private String password;
     private String body;

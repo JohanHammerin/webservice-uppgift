@@ -7,12 +7,12 @@ import java.time.LocalDateTime;
 
 @Document(collection = "test")
 public class Message {
-    String body;
-    String sender;
-    String receiver;
-    LocalDateTime timestamp;
+    private String body;
+    private String sender;
+    private String receiver;
+    private LocalDateTime timestamp;
     @Id
-    String id;
+    private String id;
 
     public Message() {
     }
