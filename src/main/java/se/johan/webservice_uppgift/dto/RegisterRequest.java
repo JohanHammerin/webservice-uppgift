@@ -9,19 +9,19 @@ public class RegisterRequest {
     @NotBlank(message = "Password can not be Blank")
     public String password;
 
-    public String getUsername() {
+    public @NotBlank(message = "Name can not be Blank") String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@NotBlank(message = "Name can not be Blank") String username) {
         this.username = username;
     }
 
-    public String getPassword() {
+    public @NotBlank(message = "Password can not be Blank") String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(@NotBlank(message = "Password can not be Blank") String password) {
         this.password = password;
     }
 }

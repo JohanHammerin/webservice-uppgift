@@ -11,7 +11,7 @@ public class SecurityConfig {
 
     //används för att hasha och validera lösenord med BCrypt
     @Bean
-    public PasswordEncoder passwordEncode(){
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(12);
     }
 }
