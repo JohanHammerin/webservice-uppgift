@@ -1,5 +1,6 @@
 package se.johan.webservice_uppgift.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.model.Message;
@@ -14,14 +15,16 @@ public class MessageService {
 
     private final ChatUserRepository chatUserRepository;
     private final MessageRepository messageRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public MessageService(ChatUserRepository chatUserRepository, MessageRepository messageRepository) {
+    public MessageService(ChatUserRepository chatUserRepository, MessageRepository messageRepository, PasswordEncoder passwordEncoder) {
         this.chatUserRepository = chatUserRepository;
         this.messageRepository = messageRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-    public Optional<Message> sendMessage(String username, String password, String body, String receiver) {
+    public Optional<Message> sendMessage(String username, String rawPassword, String body, String receiver) {
         return Optional.ofNullable(chatUserRepository.findByUsername(username))
-                .filter(user -> user.getPassword().equals(password))
+                .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword())) // jämför hash
                 .map(user -> {
                     Message message = new Message();
                     message.setSender(user.getUsername());
