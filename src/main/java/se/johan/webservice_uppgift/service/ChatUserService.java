@@ -12,6 +12,7 @@ import se.johan.webservice_uppgift.repository.ChatUserRepository;
 import se.johan.webservice_uppgift.repository.UsernameOnly;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,6 +106,10 @@ public class ChatUserService {
 
         userDiscovered.remove(chatUser.getUsername());
         userDiscovered.removeAll(chatUser.getFriendList());
+
+        Collections.shuffle(userDiscovered);
+        int maxSize = 10;
+        userDiscovered.subList(0, userDiscovered.size() - maxSize).clear();
 
         return userDiscovered;
     }
