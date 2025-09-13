@@ -34,6 +34,15 @@ public class MessageController {
                 .orElseGet(() -> ResponseEntity.status(401).build());
     }
 
+    @DeleteMapping("/deleteLatest")
+    public ResponseEntity<Message> deleteLatestMessage(@RequestBody SendMessageRequest request){
+        return messageService.deleteMessage(
+                request.getUsername(),
+                request.getPassword(),
+                request.getReceiver()
+        ).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
+    }
+
 
 
 }
