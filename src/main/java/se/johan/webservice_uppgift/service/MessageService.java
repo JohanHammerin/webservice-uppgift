@@ -91,6 +91,7 @@ public class MessageService {
 
 
 
+    /*
     public Message sendMessage(String username, String rawPassword, String body, String receiver) {
         ChatUser senderCheck = chatUserRepository.findByUsername(username);
         ChatUser receiverCheck = chatUserRepository.findByUsername(receiver);
@@ -111,5 +112,7 @@ public class MessageService {
 
         return messageRepository.save(message);
     }
+
+     */
 }
 

@@ -12,19 +12,19 @@ public class SendMessageRequest {
     @NotBlank(message = "Receiver can not be Blank")
     private String receiver;
 
-    public @NotBlank(message = "Name can not be Blank") String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(@NotBlank(message = "Name can not be Blank") String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public @NotBlank(message = "Password can not be Blank") String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(@NotBlank(message = "Password can not be Blank") String password) {
+    public void setPassword (String password) {
         this.password = password;
     }
 
@@ -36,11 +36,11 @@ public class SendMessageRequest {
         this.body = body;
     }
 
-    public @NotBlank(message = "Receiver can not be Blank") String getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(@NotBlank(message = "Receiver can not be Blank") String receiver) {
+    public void setReceiver( String receiver) {
         this.receiver = receiver;
     }
 }
