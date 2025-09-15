@@ -38,11 +38,7 @@ public class MessageController {
                 request.getReceiver()
         );
 
-        if (message.isPresent()) {
-            return ResponseEntity.ok(message.get());
-        } else {
-            return ResponseEntity.status(401).build();
-        }
+        return message.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
     }
 
 
