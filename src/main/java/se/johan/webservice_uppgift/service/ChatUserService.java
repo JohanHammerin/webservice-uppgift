@@ -9,8 +9,12 @@ import se.johan.webservice_uppgift.dto.AddFriendRequest;
 import se.johan.webservice_uppgift.dto.RegisterRequest;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.repository.ChatUserRepository;
+import se.johan.webservice_uppgift.repository.UsernameOnly;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatUserService {
@@ -83,6 +87,33 @@ public class ChatUserService {
 
         return chatUser.getFriendList();
     }
+
+    public List<String> discoverService(RegisterRequest registerRequest) {
+        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.getUsername());
+
+        if (chatUser == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        if(!passwordEncoder.matches(registerRequest.getPassword(), chatUser.getPassword())) {
+            throw new IllegalArgumentException("Wrong password");
+        }
+
+        List<String> userDiscovered = chatUserRepository.findAllBy()
+                        .stream()
+                        .map(UsernameOnly::getUsername)
+                        .collect(Collectors.toCollection(ArrayList::new));
+
+        userDiscovered.remove(chatUser.getUsername());
+        userDiscovered.removeAll(chatUser.getFriendList());
+
+        Collections.shuffle(userDiscovered);
+        int maxSize = 10;
+        userDiscovered.subList(0, userDiscovered.size() - maxSize).clear();
+
+        return userDiscovered;
+    }
+
 
 }
 

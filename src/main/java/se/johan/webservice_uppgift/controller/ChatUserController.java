@@ -47,4 +47,10 @@ public class ChatUserController {
     public ResponseEntity<List<String>> getFriends(@Valid @RequestBody RegisterRequest registerRequest) {
         return ResponseEntity.ok(service.getFriendsService(registerRequest));
     }
+
+    @GetMapping("/discover")
+    public ResponseEntity<List<String>> discoverUsers(@Valid @RequestBody RegisterRequest registerRequest) {
+        return ResponseEntity.ok(service.discoverService(registerRequest));
+    }
+
 }
