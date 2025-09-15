@@ -44,6 +44,17 @@ public class MessageController {
         }
     }
 
+
+    @DeleteMapping("/deleteLatest")
+    public ResponseEntity<Message> deleteLatestMessage(@RequestBody SendMessageRequest request){
+        return messageService.deleteMessage(
+                request.getUsername(),
+                request.getPassword(),
+                request.getReceiver()
+        ).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
+    }
+
+
     @GetMapping("/viewMessages")
     public ResponseEntity<?> viewMessages(@RequestBody ViewMessagesRequest request) {
         List<MessageDTO> messages = messageService.viewMessages(
@@ -59,6 +70,7 @@ public class MessageController {
             return ResponseEntity.ok(messages);
         }
     }
+
 
 
 
