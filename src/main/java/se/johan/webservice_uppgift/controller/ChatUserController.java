@@ -19,8 +19,6 @@ public class ChatUserController {
     private final ChatUserService service;
 
 
-
-
     @PostMapping("/register")
     public ChatUser register(@RequestBody RegisterRequest req) {
         return service.registerUser(req.username, req.password);
