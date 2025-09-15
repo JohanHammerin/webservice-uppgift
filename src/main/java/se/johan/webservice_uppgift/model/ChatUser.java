@@ -11,12 +11,12 @@ import java.util.List;
 @Document(collection = "test")
 public class ChatUser {
 
-    String username;
+    private String username;
     @JsonIgnore
-    String password;
+    private String password;
     @Id
-    String id;
-    List<String> friendList = new ArrayList<>();
+    private String id;
+    private List<String> friendList = new ArrayList<>();
 
     public List<String> getFriendList() {
         return friendList;

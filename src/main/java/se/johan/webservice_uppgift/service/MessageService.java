@@ -1,12 +1,15 @@
 package se.johan.webservice_uppgift.service;
 
+
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import com.mongodb.client.MongoClient;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import se.johan.webservice_uppgift.dto.MessageDTO;
 import se.johan.webservice_uppgift.model.ChatUser;
@@ -35,6 +38,7 @@ public class MessageService {
         this.passwordEncoder = passwordEncoder;
         this.mongoTemplate = mongoTemplate;
     }
+
     public Optional<Message> sendMessage(String username, String rawPassword, String body, String receiver) {
         return Optional.ofNullable(chatUserRepository.findByUsername(username))
                 .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword())) // jämför hash
@@ -87,5 +91,25 @@ public class MessageService {
 
 
 
+    public Message sendMessage(String username, String rawPassword, String body, String receiver) {
+        ChatUser senderCheck = chatUserRepository.findByUsername(username);
+        ChatUser receiverCheck = chatUserRepository.findByUsername(receiver);
+
+        if (senderCheck == null || !passwordEncoder.matches(rawPassword, senderCheck.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+        }
+
+        if (receiverCheck == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver not found");
+        }
+
+        Message message = new Message();
+        message.setSender(senderCheck.getUsername());
+        message.setReceiver(receiver);
+        message.setBody(body);
+        message.setTimestamp(LocalDateTime.now());
+
+        return messageRepository.save(message);
+    }
 }
 
