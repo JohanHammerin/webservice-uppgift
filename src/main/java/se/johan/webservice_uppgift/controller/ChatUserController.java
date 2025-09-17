@@ -32,10 +32,6 @@ public class ChatUserController {
         return service.registerUser(registerRequest);
     }
 
-    @PostMapping("/createUserTest")
-    public ResponseEntity<ChatUser> createUserTest(@RequestBody ChatUser user) {
-        return ResponseEntity.ok(chatUserRepository.save(user));
-    }
 
     @PutMapping("/addFriend")
     public ResponseEntity<ChatUser> addFriendTest(@Valid @RequestBody AddFriendRequest addFriendRequest) {

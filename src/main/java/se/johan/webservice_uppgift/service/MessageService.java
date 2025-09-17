@@ -91,28 +91,6 @@ public class MessageService {
 
 
 
-    /*
-    public Message sendMessage(String username, String rawPassword, String body, String receiver) {
-        ChatUser senderCheck = chatUserRepository.findByUsername(username);
-        ChatUser receiverCheck = chatUserRepository.findByUsername(receiver);
 
-        if (senderCheck == null || !passwordEncoder.matches(rawPassword, senderCheck.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
-        }
-
-        if (receiverCheck == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver not found");
-        }
-
-        Message message = new Message();
-        message.setSender(senderCheck.getUsername());
-        message.setReceiver(receiver);
-        message.setBody(body);
-        message.setTimestamp(LocalDateTime.now());
-
-        return messageRepository.save(message);
-    }
-
-     */
 }
 
