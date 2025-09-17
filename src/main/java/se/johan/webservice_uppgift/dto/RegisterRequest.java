@@ -1,27 +1,13 @@
 package se.johan.webservice_uppgift.dto;
 
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 
-public class RegisterRequest {
-    @NotBlank(message = "Username can not be Blank")
-    private String username;
-    @NotBlank(message = "Password can not be Blank")
-    private String password;
+public record RegisterRequest (
+    @Max(value = 50, message = "Maximum characters is 50")@NotBlank(message = "Username can not be Blank")
+    String username,
+    @Max(value = 50, message = "Maximum characters is 50")@NotBlank(message = "Password can not be Blank")
+    String password)
+{}
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-}

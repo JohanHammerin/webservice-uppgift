@@ -30,15 +30,15 @@ public class ChatUserService {
     //Kollar först om det finns en användare med samma namn i databasen
 
     public ChatUser registerUser(RegisterRequest registerRequest) {
-        if (chatUserRepository.findByUsername(registerRequest.getUsername()) != null) {
+        if (chatUserRepository.findByUsername(registerRequest.username()) != null) {
             throw new IllegalArgumentException("Username already taken");
         }
 
         //Skapar ny ChatUser, sätter lösenord och username och hashar lösenord innan det sparas med .encode
 
         ChatUser chatUser = new ChatUser();
-        chatUser.setUsername(registerRequest.getUsername());
-        chatUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        chatUser.setUsername(registerRequest.username());
+        chatUser.setPassword(passwordEncoder.encode(registerRequest.password()));
 
         try {
             //sparar användaren
@@ -51,17 +51,17 @@ public class ChatUserService {
     }
 
     public ChatUser addFriendService(AddFriendRequest addFriendRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(addFriendRequest.getUsername());
+        ChatUser chatUser = chatUserRepository.findByUsername(addFriendRequest.username());
 
         if (chatUser == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        if(!passwordEncoder.matches(addFriendRequest.getPassword(), chatUser.getPassword())) {
+        if(!passwordEncoder.matches(addFriendRequest.password(), chatUser.getPassword())) {
             throw new IllegalArgumentException("Wrong password");
         }
 
-        ChatUser friend = chatUserRepository.findByUsername(addFriendRequest.getFriendUsername());
+        ChatUser friend = chatUserRepository.findByUsername(addFriendRequest.friendUsername());
         if (friend == null) {
             throw new IllegalArgumentException("Friend not found");
         }
@@ -75,13 +75,13 @@ public class ChatUserService {
     }
 
     public List<String> getFriendsService(RegisterRequest registerRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.getUsername());
+        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.username());
 
         if (chatUser == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        if(!passwordEncoder.matches(registerRequest.getPassword(), chatUser.getPassword())) {
+        if(!passwordEncoder.matches(registerRequest.password(), chatUser.getPassword())) {
             throw new IllegalArgumentException("Wrong password");
         }
 
@@ -89,13 +89,13 @@ public class ChatUserService {
     }
 
     public List<String> discoverService(RegisterRequest registerRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.getUsername());
+        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.username());
 
         if (chatUser == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        if(!passwordEncoder.matches(registerRequest.getPassword(), chatUser.getPassword())) {
+        if(!passwordEncoder.matches(registerRequest.password(), chatUser.getPassword())) {
             throw new IllegalArgumentException("Wrong password");
         }
 
