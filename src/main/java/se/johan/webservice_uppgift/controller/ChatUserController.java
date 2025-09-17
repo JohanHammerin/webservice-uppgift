@@ -2,6 +2,8 @@ package se.johan.webservice_uppgift.controller;
 
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.johan.webservice_uppgift.dto.AddFriendRequest;
@@ -28,10 +30,11 @@ public class ChatUserController {
     }
 
     @PostMapping("/register")
-    public ChatUser register(@Valid @RequestBody RegisterRequest registerRequest) {
-        return service.registerUser(registerRequest);
+    public ResponseEntity<ChatUser> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.registerUser(registerRequest));
     }
-
 
     @PutMapping("/addFriend")
     public ResponseEntity<ChatUser> addFriendTest(@Valid @RequestBody AddFriendRequest addFriendRequest) {

@@ -3,6 +3,7 @@ package se.johan.webservice_uppgift.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.johan.webservice_uppgift.dto.MessageDTO;
@@ -43,12 +44,20 @@ public class MessageController {
 
 
     @DeleteMapping("/deleteLatest")
-    public ResponseEntity<Message> deleteLatestMessage(@RequestBody SendMessageRequest request){
-        return messageService.deleteMessage(
+    public ResponseEntity<Void> deleteLatestMessage(@RequestBody SendMessageRequest request) {
+        Optional<Message> deleted = messageService.deleteMessage(
                 request.username(),
                 request.password(),
                 request.receiver()
-        ).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
+        );
+
+        if (deleted.isPresent()) {
+            // 204 No Content, ingen body
+            return ResponseEntity.noContent().build();
+        } else {
+            // 401 Unauthorized
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 
