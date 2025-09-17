@@ -2,11 +2,10 @@ package se.johan.webservice_uppgift.service;
 
 
 import com.mongodb.DuplicateKeyException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import se.johan.webservice_uppgift.dto.AddFriendRequest;
-import se.johan.webservice_uppgift.dto.RegisterRequest;
+import se.johan.webservice_uppgift.dto.AddFriendDTO;
+import se.johan.webservice_uppgift.dto.RegisterDTO;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.repository.ChatUserRepository;
 import se.johan.webservice_uppgift.repository.UsernameOnly;
@@ -29,16 +28,16 @@ public class ChatUserService {
 
     //Kollar först om det finns en användare med samma namn i databasen
 
-    public ChatUser registerUser(RegisterRequest registerRequest) {
-        if (chatUserRepository.findByUsername(registerRequest.username()) != null) {
+    public ChatUser registerUser(RegisterDTO registerDTO) {
+        if (chatUserRepository.findByUsername(registerDTO.username()) != null) {
             throw new IllegalArgumentException("Username already taken");
         }
 
         //Skapar ny ChatUser, sätter lösenord och username och hashar lösenord innan det sparas med .encode
 
         ChatUser chatUser = new ChatUser();
-        chatUser.setUsername(registerRequest.username());
-        chatUser.setPassword(passwordEncoder.encode(registerRequest.password()));
+        chatUser.setUsername(registerDTO.username());
+        chatUser.setPassword(passwordEncoder.encode(registerDTO.password()));
 
         try {
             //sparar användaren
@@ -50,18 +49,18 @@ public class ChatUserService {
         }
     }
 
-    public ChatUser addFriendService(AddFriendRequest addFriendRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(addFriendRequest.username());
+    public ChatUser addFriendService(AddFriendDTO addFriendDTO) {
+        ChatUser chatUser = chatUserRepository.findByUsername(addFriendDTO.username());
 
         if (chatUser == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        if(!passwordEncoder.matches(addFriendRequest.password(), chatUser.getPassword())) {
+        if(!passwordEncoder.matches(addFriendDTO.password(), chatUser.getPassword())) {
             throw new IllegalArgumentException("Wrong password");
         }
 
-        ChatUser friend = chatUserRepository.findByUsername(addFriendRequest.friendUsername());
+        ChatUser friend = chatUserRepository.findByUsername(addFriendDTO.friendUsername());
         if (friend == null) {
             throw new IllegalArgumentException("Friend not found");
         }
@@ -74,28 +73,28 @@ public class ChatUserService {
         return chatUserRepository.save(chatUser);
     }
 
-    public List<String> getFriendsService(RegisterRequest registerRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.username());
+    public List<String> getFriendsService(RegisterDTO registerDTO) {
+        ChatUser chatUser = chatUserRepository.findByUsername(registerDTO.username());
 
         if (chatUser == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        if(!passwordEncoder.matches(registerRequest.password(), chatUser.getPassword())) {
+        if(!passwordEncoder.matches(registerDTO.password(), chatUser.getPassword())) {
             throw new IllegalArgumentException("Wrong password");
         }
 
         return chatUser.getFriendList();
     }
 
-    public List<String> discoverService(RegisterRequest registerRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.username());
+    public List<String> discoverService(RegisterDTO registerDTO) {
+        ChatUser chatUser = chatUserRepository.findByUsername(registerDTO.username());
 
         if (chatUser == null) {
             throw new IllegalArgumentException("User not found");
         }
 
-        if(!passwordEncoder.matches(registerRequest.password(), chatUser.getPassword())) {
+        if(!passwordEncoder.matches(registerDTO.password(), chatUser.getPassword())) {
             throw new IllegalArgumentException("Wrong password");
         }
 

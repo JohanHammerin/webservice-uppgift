@@ -3,11 +3,10 @@ package se.johan.webservice_uppgift.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import se.johan.webservice_uppgift.dto.AddFriendRequest;
-import se.johan.webservice_uppgift.dto.RegisterRequest;
+import se.johan.webservice_uppgift.dto.AddFriendDTO;
+import se.johan.webservice_uppgift.dto.RegisterDTO;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.repository.ChatUserRepository;
 import se.johan.webservice_uppgift.service.ChatUserService;
@@ -30,26 +29,26 @@ public class ChatUserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ChatUser> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<ChatUser> register(@Valid @RequestBody RegisterDTO registerDTO) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(service.registerUser(registerRequest));
+                .body(service.registerUser(registerDTO));
     }
 
     @PutMapping("/addFriend")
-    public ResponseEntity<ChatUser> addFriendTest(@Valid @RequestBody AddFriendRequest addFriendRequest) {
-        ChatUser updatedUser = service.addFriendService(addFriendRequest);
+    public ResponseEntity<ChatUser> addFriendTest(@Valid @RequestBody AddFriendDTO addFriendDTO) {
+        ChatUser updatedUser = service.addFriendService(addFriendDTO);
         return ResponseEntity.ok(updatedUser);
     }
 
     @GetMapping("/getFriends")
-    public ResponseEntity<List<String>> getFriends(@Valid @RequestBody RegisterRequest registerRequest) {
-        return ResponseEntity.ok(service.getFriendsService(registerRequest));
+    public ResponseEntity<List<String>> getFriends(@Valid @RequestBody RegisterDTO registerDTO) {
+        return ResponseEntity.ok(service.getFriendsService(registerDTO));
     }
 
     @GetMapping("/discover")
-    public ResponseEntity<List<String>> discoverUsers(@Valid @RequestBody RegisterRequest registerRequest) {
-        return ResponseEntity.ok(service.discoverService(registerRequest));
+    public ResponseEntity<List<String>> discoverUsers(@Valid @RequestBody RegisterDTO registerDTO) {
+        return ResponseEntity.ok(service.discoverService(registerDTO));
     }
 
 }
