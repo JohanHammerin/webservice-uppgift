@@ -1,27 +1,24 @@
 package se.johan.webservice_uppgift.service;
 
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import com.mongodb.client.MongoClient;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Service;
 import se.johan.webservice_uppgift.dto.MessageDTO;
+import se.johan.webservice_uppgift.dto.SentMessageDTO;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.model.Message;
 import se.johan.webservice_uppgift.repository.ChatUserRepository;
 import se.johan.webservice_uppgift.repository.MessageRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class MessageService {
@@ -80,13 +77,40 @@ public class MessageService {
 
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             List<Message> messages = messageRepository.findByReceiverOrderByTimestampDesc(user.getUsername());
-            return messages.stream()
-                    .map(m -> new MessageDTO(m.getSender(), m.getBody(), m.getTimestamp()))
-                    .collect(Collectors.toList());
+
+            List<MessageDTO> result = new ArrayList<>();
+
+            for (Message message : messages) {
+                MessageDTO dto = new MessageDTO(message.getSender(), message.getBody(), message.getTimestamp());
+                result.add(dto);
+            }
+            return result;
         }
 
         return Collections.emptyList();
     }
+
+
+    public List<SentMessageDTO> viewSentMessages(String username, String password) {
+        ChatUser user = chatUserRepository.findByUsername(username);
+
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            List<Message> messages = messageRepository.findBySenderOrderByTimestampDesc(user.getUsername());
+            List<SentMessageDTO> result = new ArrayList<>();
+
+            for (Message message : messages) {
+                SentMessageDTO dto = new SentMessageDTO(
+                        message.getReceiver(),   // <-- här tar vi mottagaren
+                        message.getBody(),
+                        message.getTimestamp()
+                );
+                result.add(dto);
+            }
+            return result;
+        }
+        return Collections.emptyList();
+    }
+
 
 
 

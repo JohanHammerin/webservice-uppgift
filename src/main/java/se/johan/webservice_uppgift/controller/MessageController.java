@@ -1,17 +1,14 @@
 package se.johan.webservice_uppgift.controller;
 
 
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.johan.webservice_uppgift.dto.MessageDTO;
-import se.johan.webservice_uppgift.dto.SendMessageRequest;
-import se.johan.webservice_uppgift.dto.ViewMessagesRequest;
-import se.johan.webservice_uppgift.model.ChatUser;
+import se.johan.webservice_uppgift.dto.SendMessageDTO;
+import se.johan.webservice_uppgift.dto.SentMessageDTO;
+import se.johan.webservice_uppgift.dto.ViewMessagesDTO;
 import se.johan.webservice_uppgift.model.Message;
-import se.johan.webservice_uppgift.repository.ChatUserRepository;
 import se.johan.webservice_uppgift.repository.MessageRepository;
 import se.johan.webservice_uppgift.service.MessageService;
 
@@ -31,7 +28,7 @@ public class MessageController {
     }
 
     @PostMapping("/sendNew")
-    public ResponseEntity<Message> sendNewMessage(@RequestBody SendMessageRequest request) {
+    public ResponseEntity<Message> sendNewMessage(@RequestBody SendMessageDTO request) {
         Optional<Message> message = messageService.sendMessage(
                 request.username(),
                 request.password(),
@@ -44,7 +41,7 @@ public class MessageController {
 
 
     @DeleteMapping("/deleteLatest")
-    public ResponseEntity<Void> deleteLatestMessage(@RequestBody SendMessageRequest request) {
+    public ResponseEntity<Void> deleteLatestMessage(@RequestBody SendMessageDTO request) {
         Optional<Message> deleted = messageService.deleteMessage(
                 request.username(),
                 request.password(),
@@ -62,7 +59,7 @@ public class MessageController {
 
 
     @GetMapping("/viewMessages")
-    public ResponseEntity<?> viewMessages(@RequestBody ViewMessagesRequest request) {
+    public ResponseEntity<?> viewMessages(@RequestBody ViewMessagesDTO request) {
         List<MessageDTO> messages = messageService.viewMessages(
                 request.username(),
                 request.password()
@@ -76,6 +73,23 @@ public class MessageController {
             return ResponseEntity.ok(messages);
         }
     }
+
+    @GetMapping("/viewSentMessages")
+    public ResponseEntity<?> viewSentMessages(@RequestBody ViewMessagesDTO request) {
+        List<SentMessageDTO> messages = messageService.viewSentMessages(
+                request.username(),
+                request.password()
+        );
+
+        if (messages == null) {
+            return ResponseEntity.status(401).body("Fel användarnamn eller lösenord");
+        } else if (messages.isEmpty()) {
+            return ResponseEntity.ok("Inga meddelanden att visa");
+        } else {
+            return ResponseEntity.ok(messages);
+        }
+    }
+
 
 }
 
