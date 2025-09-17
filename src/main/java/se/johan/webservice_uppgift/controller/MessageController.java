@@ -32,10 +32,10 @@ public class MessageController {
     @PostMapping("/sendNew")
     public ResponseEntity<Message> sendNewMessage(@RequestBody SendMessageRequest request) {
         Optional<Message> message = messageService.sendMessage(
-                request.getUsername(),
-                request.getPassword(),
-                request.getBody(),
-                request.getReceiver()
+                request.username(),
+                request.password(),
+                request.body(),
+                request.receiver()
         );
 
         return message.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
@@ -45,9 +45,9 @@ public class MessageController {
     @DeleteMapping("/deleteLatest")
     public ResponseEntity<Message> deleteLatestMessage(@RequestBody SendMessageRequest request){
         return messageService.deleteMessage(
-                request.getUsername(),
-                request.getPassword(),
-                request.getReceiver()
+                request.username(),
+                request.password(),
+                request.receiver()
         ).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
     }
 
@@ -55,8 +55,8 @@ public class MessageController {
     @GetMapping("/viewMessages")
     public ResponseEntity<?> viewMessages(@RequestBody ViewMessagesRequest request) {
         List<MessageDTO> messages = messageService.viewMessages(
-                request.getUsername(),
-                request.getPassword()
+                request.username(),
+                request.password()
         );
 
         if (messages == null) {

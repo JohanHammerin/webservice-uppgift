@@ -1,41 +1,12 @@
 package se.johan.webservice_uppgift.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+
 import java.time.LocalDateTime;
 
-public class MessageDTO {
-
-    private String sender;
-    private String body;
-    private LocalDateTime timestamp;
-
-
-    public MessageDTO(String sender, String body, LocalDateTime timestamp) {
-        this.sender = sender;
-        this.body = body;
-        this.timestamp = timestamp;
-    }
-
-    public String getSender() {
-        return sender;
-    }
-
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public LocalDateTime getTimeStamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timeStamp) {
-        this.timestamp = timeStamp;
-    }
-}
+public record MessageDTO(
+       @Max(value = 50, message = "Maximum characters is 50")@NotBlank(message = "Sender can not be Blank") String sender,
+        @Max(value = 500, message = "Maximum characters is 500")@NotBlank(message = "Body can not be Blank") String body,
+        LocalDateTime timestamp
+) {}
