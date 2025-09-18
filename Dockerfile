@@ -1,24 +1,28 @@
 # ---------- Build Stage ----------
 
-FROM gradle:8.3-jdk21-slim AS build
+FROM gradle:8.3-jdk21 AS build
+
+# Sätt arbetsmapp
 
 WORKDIR /app
 
-# Kopiera alla filer
+# Kopiera hela projektet
 
 COPY . .
 
-# Bygg JAR utan tester
+# Bygg JAR-filen
 
 RUN gradle clean build -x test
 
-# ---------- Runtime Stage ----------
+# ---------- Run Stage ----------
 
 FROM openjdk:21-jdk-slim
 
+# Sätt arbetsmapp
+
 WORKDIR /app
 
-# Kopiera JAR från build-stadiet
+# Kopiera JAR-filen från build-staget
 
 COPY --from=build /app/build/libs/*.jar app.jar
 
@@ -26,7 +30,7 @@ COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-# Starta applikationen
+# Kör applikationen
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
