@@ -1,37 +1,33 @@
-# ---------- Build Stage ----------
+# Steg 1: Byggmiljö
+FROM openjdk:21-jdk-slim AS build
 
-FROM gradle:8.3-jdk21 AS build
+# Installera Gradle
+RUN apt-get update && apt-get install -y wget unzip && \
+    wget https://services.gradle.org/distributions/gradle-8.3-bin.zip && \
+    unzip gradle-8.3-bin.zip && \
+    mv gradle-8.3 /opt/gradle && \
+    ln -s /opt/gradle/bin/gradle /usr/bin/gradle
 
-# Sätt arbetsmapp
-
+# Sätt arbetskatalog
 WORKDIR /app
 
-# Kopiera hela projektet
-
+# Kopiera projektfiler
 COPY . .
 
-# Bygg JAR-filen
-
+# Bygg applikationen
 RUN gradle clean build -x test
 
-# ---------- Run Stage ----------
-
+# Steg 2: Körmiljö
 FROM openjdk:21-jdk-slim
 
-# Sätt arbetsmapp
-
+# Sätt arbetskatalog
 WORKDIR /app
 
-# Kopiera JAR-filen från build-staget
-
+# Kopiera den byggda JAR-filen från byggsteget
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Exponera porten som Spring Boot använder
-
+# Exponera porten som applikationen kommer att använda
 EXPOSE 8080
 
-# Kör applikationen
-
+# Starta applikationen
 ENTRYPOINT ["java", "-jar", "app.jar"]
-
- 
