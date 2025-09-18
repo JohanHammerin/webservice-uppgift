@@ -7,7 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import se.johan.webservice_uppgift.dto.MessageDTO;
+import se.johan.webservice_uppgift.dto.MessageRequest;
 import se.johan.webservice_uppgift.dto.SentMessageDTO;
 import se.johan.webservice_uppgift.model.ChatUser;
 import se.johan.webservice_uppgift.model.Message;
@@ -15,10 +15,7 @@ import se.johan.webservice_uppgift.repository.ChatUserRepository;
 import se.johan.webservice_uppgift.repository.MessageRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MessageService {
@@ -36,29 +33,30 @@ public class MessageService {
         this.mongoTemplate = mongoTemplate;
     }
 
-    public Optional<Message> sendMessage(String username, String rawPassword, String body, String receiver) {
+    public Message sendMessage(String username, String rawPassword, String body, String receiver) {
         // Hämta avsändaren
         ChatUser sender = chatUserRepository.findByUsername(username);
 
         if (sender == null || !passwordEncoder.matches(rawPassword, sender.getPassword())) {
-            return Optional.empty(); // fel användarnamn eller lösenord
+            throw new IllegalArgumentException("Fel användarnamn eller lösenord");
         }
 
         // Hämta mottagaren
         ChatUser receiverUser = chatUserRepository.findByUsername(receiver);
         if (receiverUser == null) {
-            return Optional.empty(); // mottagaren finns inte
+            throw new NoSuchElementException("Mottagaren finns inte");
         }
 
-        // Skapa meddelandet
+        // Skapa och spara meddelandet
         Message message = new Message();
         message.setSender(sender.getUsername());
         message.setBody(body);
         message.setReceiver(receiverUser.getUsername());
         message.setTimestamp(LocalDateTime.now());
 
-        return Optional.of(messageRepository.save(message));
+        return messageRepository.save(message);
     }
+
 
     public Optional<Message> deleteMessage(String username, String rawPassword, String receiver){
         ChatUser user = chatUserRepository.findByUsername(username);
@@ -84,16 +82,16 @@ public class MessageService {
     }
 
 
-    public List<MessageDTO> viewMessages(String username, String password) {
+    public List<MessageRequest> viewMessages(String username, String password) {
         ChatUser user = chatUserRepository.findByUsername(username);
 
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             List<Message> messages = messageRepository.findByReceiverOrderByTimestampDesc(user.getUsername());
 
-            List<MessageDTO> result = new ArrayList<>();
+            List<MessageRequest> result = new ArrayList<>();
 
             for (Message message : messages) {
-                MessageDTO dto = new MessageDTO(message.getSender(), message.getBody(), message.getTimestamp());
+                MessageRequest dto = new MessageRequest(message.getSender(), message.getBody(), message.getTimestamp());
                 result.add(dto);
             }
             return result;

@@ -1,11 +1,12 @@
 package se.johan.webservice_uppgift.controller;
 
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import se.johan.webservice_uppgift.dto.MessageDTO;
-import se.johan.webservice_uppgift.dto.SendMessageDTO;
+import se.johan.webservice_uppgift.dto.MessageRequest;
+import se.johan.webservice_uppgift.dto.SendMessageRequest;
 import se.johan.webservice_uppgift.dto.SentMessageDTO;
 import se.johan.webservice_uppgift.dto.ViewMessagesDTO;
 import se.johan.webservice_uppgift.model.Message;
@@ -13,11 +14,13 @@ import se.johan.webservice_uppgift.repository.MessageRepository;
 import se.johan.webservice_uppgift.service.MessageService;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
+
     private final MessageService messageService;
     private final MessageRepository messageRepository;
 
@@ -27,19 +30,30 @@ public class MessageController {
     }
 
     @PostMapping("/sendNew")
-    public ResponseEntity<Message> sendNewMessage(@RequestBody SendMessageDTO request) {
-        Optional<Message> message = messageService.sendMessage(
-                request.username(),
-                request.password(),
-                request.body(),
-                request.receiver()
-        );
-        return message.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
+    public ResponseEntity<?> sendNewMessage(@Valid @RequestBody SendMessageRequest request) {
+        try {
+            messageService.sendMessage(
+                    request.username(),
+                    request.password(),
+                    request.body(),
+                    request.receiver()
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Fel användarnamn eller lösenord");
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mottagaren finns inte");
+        }
     }
 
 
+
+
+
     @DeleteMapping("/deleteLatest")
-    public ResponseEntity<Void> deleteLatestMessage(@RequestBody SendMessageDTO request) {
+    public ResponseEntity<Void> deleteLatestMessage(@RequestBody SendMessageRequest request) {
         Optional<Message> deleted = messageService.deleteMessage(
                 request.username(),
                 request.password(),
@@ -58,7 +72,7 @@ public class MessageController {
 
     @GetMapping("/viewMessages")
     public ResponseEntity<?> viewMessages(@RequestBody ViewMessagesDTO request) {
-        List<MessageDTO> messages = messageService.viewMessages(
+        List<MessageRequest> messages = messageService.viewMessages(
                 request.username(),
                 request.password()
         );
