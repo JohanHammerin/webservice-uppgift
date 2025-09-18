@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SecurityConfig {
-
     //används för att hasha och validera lösenord med BCrypt
     @Bean
     public PasswordEncoder passwordEncoder(){

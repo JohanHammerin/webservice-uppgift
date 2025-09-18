@@ -22,7 +22,6 @@ public class ChatUserService {
     private final ChatUserRepository chatUserRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     public ChatUserService(ChatUserRepository chatUserRepository, PasswordEncoder passwordEncoder) {
         this.chatUserRepository = chatUserRepository;
         this.passwordEncoder = passwordEncoder;
@@ -38,20 +37,16 @@ public class ChatUserService {
         if (!passwordEncoder.matches(password, chatUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
         }
-
         return chatUser;
     }
 
-
     //Kollar först om det finns en användare med samma namn i databasen
-
     public ChatUser registerUser(RegisterDTO registerDTO) {
         if (chatUserRepository.findByUsername(registerDTO.username()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
         }
 
         //Skapar ny ChatUser, sätter lösenord och username och hashar lösenord innan det sparas med .encode
-
         ChatUser chatUser = new ChatUser();
         chatUser.setUsername(registerDTO.username());
         chatUser.setPassword(passwordEncoder.encode(registerDTO.password()));
@@ -68,8 +63,8 @@ public class ChatUserService {
 
     public ChatUser addFriendService(AddFriendDTO addFriendDTO) {
         ChatUser chatUser = authenticateUser(addFriendDTO.username(), addFriendDTO.password());
-
         ChatUser friend = chatUserRepository.findByUsername(addFriendDTO.friendUsername());
+
         if (friend == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friend not found");
         }
@@ -86,12 +81,10 @@ public class ChatUserService {
         return chatUserRepository.save(chatUser);
     }
 
-
     public List<String> getFriendsService(RegisterDTO registerDTO) {
         ChatUser chatUser = authenticateUser(registerDTO.username(), registerDTO.password());
         return chatUser.getFriendList();
     }
-
 
     public List<String> discoverService(RegisterDTO registerDTO) {
         ChatUser chatUser = authenticateUser(registerDTO.username(), registerDTO.password());
@@ -109,7 +102,6 @@ public class ChatUserService {
         if (userDiscovered.size() > maxSize) {
             userDiscovered.subList(maxSize, userDiscovered.size()).clear();
         }
-
         return userDiscovered;
     }
 }

@@ -17,11 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/chatUser")
 public class ChatUserController {
-
-
     private final ChatUserService service;
     private final ChatUserRepository chatUserRepository;
-
 
     public ChatUserController(ChatUserService service, ChatUserRepository chatUserRepository) {
         this.service = service;

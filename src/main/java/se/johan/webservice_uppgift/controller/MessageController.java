@@ -18,7 +18,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/messages")
 public class MessageController {
-
     private final MessageService messageService;
     private final MessageRepository messageRepository;
 
@@ -35,7 +34,6 @@ public class MessageController {
                 request.body(),
                 request.receiver()
         );
-
         return message.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(401).build());
     }
 

@@ -98,7 +98,6 @@ public class MessageService {
             }
             return result;
         }
-
         return Collections.emptyList();
     }
 
