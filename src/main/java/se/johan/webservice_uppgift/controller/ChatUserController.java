@@ -36,7 +36,7 @@ public class ChatUserController {
     }
 
     @PutMapping("/addFriend")
-    public ResponseEntity<ChatUser> addFriendTest(@Valid @RequestBody AddFriendDTO addFriendDTO) {
+    public ResponseEntity<ChatUser> addFriend(@Valid @RequestBody AddFriendDTO addFriendDTO) {
         ChatUser updatedUser = service.addFriendService(addFriendDTO);
         return ResponseEntity.ok(updatedUser);
     }

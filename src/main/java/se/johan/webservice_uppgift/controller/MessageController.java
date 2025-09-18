@@ -89,7 +89,5 @@ public class MessageController {
             return ResponseEntity.ok(messages);
         }
     }
-
-
 }
 
