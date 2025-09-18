@@ -112,18 +112,4 @@ public class ChatUserService {
 
         return userDiscovered;
     }
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
