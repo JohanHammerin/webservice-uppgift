@@ -28,6 +28,21 @@ public class ChatUserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    private ChatUser authenticateUser(String username, String password) {
+        ChatUser chatUser = chatUserRepository.findByUsername(username);
+
+        if (chatUser == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        if (!passwordEncoder.matches(password, chatUser.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
+        }
+
+        return chatUser;
+    }
+
+
     //Kollar först om det finns en användare med samma namn i databasen
 
     public ChatUser registerUser(RegisterRequest registerRequest) {
@@ -52,15 +67,7 @@ public class ChatUserService {
     }
 
     public ChatUser addFriendService(AddFriendRequest addFriendRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(addFriendRequest.username());
-
-        if (chatUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-
-        if (!passwordEncoder.matches(addFriendRequest.password(), chatUser.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
-        }
+        ChatUser chatUser = authenticateUser(addFriendRequest.username(), addFriendRequest.password());
 
         ChatUser friend = chatUserRepository.findByUsername(addFriendRequest.friendUsername());
         if (friend == null) {
@@ -71,52 +78,41 @@ public class ChatUserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot add yourself as a friend");
         }
 
-        if (!chatUser.getFriendList().contains(friend.getUsername())) {
-            chatUser.getFriendList().add(friend.getUsername());
+        if (chatUser.getFriendList().contains(friend.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already your friend");
         }
-
+        chatUser.getFriendList().add(friend.getUsername());
         return chatUserRepository.save(chatUser);
     }
 
+
     public List<String> getFriendsService(RegisterRequest registerRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.username());
-
-        if (chatUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-
-        if (!passwordEncoder.matches(registerRequest.password(), chatUser.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
-        }
-
+        ChatUser chatUser = authenticateUser(registerRequest.username(), registerRequest.password());
         return chatUser.getFriendList();
     }
 
+
     public List<String> discoverService(RegisterRequest registerRequest) {
-        ChatUser chatUser = chatUserRepository.findByUsername(registerRequest.username());
-
-        if (chatUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-        }
-
-        if (!passwordEncoder.matches(registerRequest.password(), chatUser.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
-        }
+        ChatUser chatUser = authenticateUser(registerRequest.username(), registerRequest.password());
 
         List<String> userDiscovered = chatUserRepository.findAllBy()
-                        .stream()
-                        .map(UsernameOnly::getUsername)
-                        .collect(Collectors.toCollection(ArrayList::new));
+                .stream()
+                .map(UsernameOnly::getUsername)
+                .filter(username -> username != null)
+                .collect(Collectors.toCollection(ArrayList::new));
 
         userDiscovered.remove(chatUser.getUsername());
         userDiscovered.removeAll(chatUser.getFriendList());
 
         Collections.shuffle(userDiscovered);
         int maxSize = 10;
-        userDiscovered.subList(0, userDiscovered.size() - maxSize).clear();
+        if (userDiscovered.size() > maxSize) {
+            userDiscovered.subList(maxSize, userDiscovered.size()).clear();
+        }
 
         return userDiscovered;
     }
+
 
 
 }
