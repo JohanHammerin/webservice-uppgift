@@ -37,17 +37,29 @@ public class MessageService {
     }
 
     public Optional<Message> sendMessage(String username, String rawPassword, String body, String receiver) {
-        return Optional.ofNullable(chatUserRepository.findByUsername(username))
-                .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword())) // jämför hash
-                .map(user -> {
-                    Message message = new Message();
-                    message.setSender(user.getUsername());
-                    message.setBody(body);
-                    message.setReceiver(receiver);
-                    message.setTimestamp(LocalDateTime.now());
-                    return messageRepository.save(message);
-                });
+        // Hämta avsändaren
+        ChatUser sender = chatUserRepository.findByUsername(username);
+
+        if (sender == null || !passwordEncoder.matches(rawPassword, sender.getPassword())) {
+            return Optional.empty(); // fel användarnamn eller lösenord
+        }
+
+        // Hämta mottagaren
+        ChatUser receiverUser = chatUserRepository.findByUsername(receiver);
+        if (receiverUser == null) {
+            return Optional.empty(); // mottagaren finns inte
+        }
+
+        // Skapa meddelandet
+        Message message = new Message();
+        message.setSender(sender.getUsername());
+        message.setBody(body);
+        message.setReceiver(receiverUser.getUsername());
+        message.setTimestamp(LocalDateTime.now());
+
+        return Optional.of(messageRepository.save(message));
     }
+
     public Optional<Message> deleteMessage(String username, String rawPassword, String receiver){
         ChatUser user = chatUserRepository.findByUsername(username);
 
