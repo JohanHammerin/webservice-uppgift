@@ -2,8 +2,10 @@ package se.johan.webservice_uppgift.service;
 
 
 import com.mongodb.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import se.johan.webservice_uppgift.dto.AddFriendDTO;
 import se.johan.webservice_uppgift.dto.RegisterDTO;
 import se.johan.webservice_uppgift.model.ChatUser;
@@ -30,7 +32,7 @@ public class ChatUserService {
 
     public ChatUser registerUser(RegisterDTO registerDTO) {
         if (chatUserRepository.findByUsername(registerDTO.username()) != null) {
-            throw new IllegalArgumentException("Username already taken");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
         }
 
         //Skapar ny ChatUser, sätter lösenord och username och hashar lösenord innan det sparas med .encode
@@ -45,7 +47,7 @@ public class ChatUserService {
 
             //Dubbelkollar att 2 användare inte skrivit in samma namn samtidigt
         } catch (DuplicateKeyException e) {
-            throw new IllegalArgumentException("Username already taken");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
         }
     }
 
@@ -53,22 +55,25 @@ public class ChatUserService {
         ChatUser chatUser = chatUserRepository.findByUsername(addFriendDTO.username());
 
         if (chatUser == null) {
-            throw new IllegalArgumentException("User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
-        if(!passwordEncoder.matches(addFriendDTO.password(), chatUser.getPassword())) {
-            throw new IllegalArgumentException("Wrong password");
+        if (!passwordEncoder.matches(addFriendDTO.password(), chatUser.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
         }
 
         ChatUser friend = chatUserRepository.findByUsername(addFriendDTO.friendUsername());
         if (friend == null) {
-            throw new IllegalArgumentException("Friend not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Friend not found");
         }
 
-        if(!chatUser.getFriendList().contains(friend.getUsername())) {
+        if (chatUser.getUsername().equals(friend.getUsername())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot add yourself as a friend");
+        }
+
+        if (!chatUser.getFriendList().contains(friend.getUsername())) {
             chatUser.getFriendList().add(friend.getUsername());
         }
-
 
         return chatUserRepository.save(chatUser);
     }
@@ -77,11 +82,11 @@ public class ChatUserService {
         ChatUser chatUser = chatUserRepository.findByUsername(registerDTO.username());
 
         if (chatUser == null) {
-            throw new IllegalArgumentException("User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
-        if(!passwordEncoder.matches(registerDTO.password(), chatUser.getPassword())) {
-            throw new IllegalArgumentException("Wrong password");
+        if (!passwordEncoder.matches(registerDTO.password(), chatUser.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
         }
 
         return chatUser.getFriendList();
@@ -91,11 +96,11 @@ public class ChatUserService {
         ChatUser chatUser = chatUserRepository.findByUsername(registerDTO.username());
 
         if (chatUser == null) {
-            throw new IllegalArgumentException("User not found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
-        if(!passwordEncoder.matches(registerDTO.password(), chatUser.getPassword())) {
-            throw new IllegalArgumentException("Wrong password");
+        if (!passwordEncoder.matches(registerDTO.password(), chatUser.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password");
         }
 
         List<String> userDiscovered = chatUserRepository.findAllBy()
