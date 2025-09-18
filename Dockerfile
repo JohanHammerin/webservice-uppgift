@@ -1,11 +1,22 @@
-# Use a lightweight Java runtime
-FROM openjdk:21-jdk-slim
+# ---------- Build Stage ----------
 
-# Set the working directory inside the container
+FROM gradle:8.3.3-jdk21 AS build
+
 WORKDIR /app
 
-# Copy the JAR built by Gradle into the container
-COPY build/libs/*.jar app.jar
+COPY . .
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "webservice-uppgift-0.0.1-SNAPSHOT.jar"]
+RUN gradle clean build -x test
+
+# ---------- Runtime Stage ----------
+
+FROM openjdk:21-jdk-slim
+
+WORKDIR /app
+
+COPY --from=build /app/build/libs/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
